@@ -5,6 +5,8 @@
 !.gitignore
 !.github
 !Plugins
+!LICENSE
+!README.md
 
 # Skip .meta and .DS_Store
 *.meta

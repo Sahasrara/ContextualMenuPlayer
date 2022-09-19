@@ -99,7 +99,7 @@
     margin-right: var(--contextual-menu-icon-margin-right);
     width: var(--contextual-menu-item-font-size);
     height: var(--contextual-menu-item-font-size);
-    background-image: url('project://database/Assets/UI%20Toolkit/UnityThemes/UnityDefaultRuntimeTheme.tss?fileID=-1087164816274819069&guid=bf814613124cf45699cb91d98183bb04&type=3#arrow-right@2x');
+    background-image: resource('Builtin Skins/DarkSkin/Images/ArrowNavigationRight.png');
 }
 
 .contextual-menu-item-icon-checked {
@@ -108,5 +108,5 @@
     margin-right: var(--contextual-menu-icon-margin-right);
     width: var(--contextual-menu-item-font-size);
     height: var(--contextual-menu-item-font-size);
-    background-image: url('project://database/Assets/UI%20Toolkit/UnityThemes/UnityDefaultRuntimeTheme.tss?fileID=7433338533053954386&guid=bf814613124cf45699cb91d98183bb04&type=3#check@2x');
+    background-image: resource('Builtin Skins/DarkSkin/Images/ShurikenToggleNormalOn.png');
 }

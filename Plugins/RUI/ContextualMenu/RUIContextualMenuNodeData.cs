@@ -4,29 +4,29 @@ using UnityEngine.UIElements;
 
 namespace RUI
 {
-    internal abstract class RUIContextualMenuNodeData
+    public abstract class RUIContextualMenuNodeData
     {
         public readonly string NodeName;
 
-        internal abstract void AddChild(RUIContextualMenuNodeData node);
-        internal abstract void Execute();
-        internal abstract List<RUIContextualMenuNodeData> Children { get; }
-        internal abstract int ChildCount { get; }
-        internal abstract bool IsSubMenu { get; }
-        internal abstract bool IsSeparator { get; }
-        internal abstract bool IsDisabled { get; }
-        internal abstract bool IsChecked { get; }
+        public abstract void AddChild(RUIContextualMenuNodeData node);
+        public abstract void Execute();
+        public abstract List<RUIContextualMenuNodeData> Children { get; }
+        public abstract int ChildCount { get; }
+        public abstract bool IsSubMenu { get; }
+        public abstract bool IsSeparator { get; }
+        public abstract bool IsDisabled { get; }
+        public abstract bool IsChecked { get; }
 
-        internal RUIContextualMenuNodeData(string name) => NodeName = name;
+        protected RUIContextualMenuNodeData(string name) => NodeName = name;
 
-        internal static RUIContextualMenuNodeData ConstructMenuTree(DropdownMenu dropdownMenu)
+        public static RUIContextualMenuNodeData ConstructMenuTree(DropdownMenu dropdownMenu)
         {
             SubMenuNode root = new(string.Empty);
             root.ConstructFromMenu(dropdownMenu);
             return root;
         }
 
-        internal static RUIContextualMenuNodeData NewTree() => new SubMenuNode(string.Empty);
+        public static RUIContextualMenuNodeData NewTree() => new SubMenuNode(string.Empty);
 
         private class SeparatorMenuNode : RUIContextualMenuNodeData
         {
@@ -37,15 +37,15 @@ namespace RUI
 
             internal SeparatorMenuNode(string name) : base(name) { }
 
-            internal override void AddChild(RUIContextualMenuNodeData node)
+            public override void AddChild(RUIContextualMenuNodeData node)
                 => throw NoChildrenException;
-            internal override void Execute() => throw NoExecuteException;
-            internal override List<RUIContextualMenuNodeData> Children => throw NoChildrenException;
-            internal override int ChildCount => throw NoChildrenException;
-            internal override bool IsSeparator => true;
-            internal override bool IsSubMenu => false;
-            internal override bool IsDisabled => false;
-            internal override bool IsChecked => false;
+            public override void Execute() => throw NoExecuteException;
+            public override List<RUIContextualMenuNodeData> Children => throw NoChildrenException;
+            public override int ChildCount => throw NoChildrenException;
+            public override bool IsSeparator => true;
+            public override bool IsSubMenu => false;
+            public override bool IsDisabled => false;
+            public override bool IsChecked => false;
         }
 
         private class ActionMenuNode : RUIContextualMenuNodeData
@@ -58,15 +58,15 @@ namespace RUI
             internal ActionMenuNode(string name, DropdownMenuAction action) : base(name)
                 => m_MenuAction = action;
 
-            internal override void AddChild(RUIContextualMenuNodeData node)
+            public override void AddChild(RUIContextualMenuNodeData node)
                 => throw NoChildrenException;
-            internal override void Execute() => m_MenuAction.Execute();
-            internal override List<RUIContextualMenuNodeData> Children => throw NoChildrenException;
-            internal override int ChildCount => throw NoChildrenException;
-            internal override bool IsSeparator => false;
-            internal override bool IsSubMenu => false;
-            internal override bool IsDisabled => m_MenuAction.IsDisabled();
-            internal override bool IsChecked => m_MenuAction.IsChecked();
+            public override void Execute() => m_MenuAction.Execute();
+            public override List<RUIContextualMenuNodeData> Children => throw NoChildrenException;
+            public override int ChildCount => throw NoChildrenException;
+            public override bool IsSeparator => false;
+            public override bool IsSubMenu => false;
+            public override bool IsDisabled => m_MenuAction.IsDisabled();
+            public override bool IsChecked => m_MenuAction.IsChecked();
         }
 
         private class SubMenuNode : RUIContextualMenuNodeData
@@ -78,14 +78,14 @@ namespace RUI
 
             internal SubMenuNode(string name) : base(name) => m_Children = new();
 
-            internal override void AddChild(RUIContextualMenuNodeData node) => m_Children.Add(node);
-            internal override void Execute() => throw NoExecuteException;
-            internal override List<RUIContextualMenuNodeData> Children => m_Children;
-            internal override int ChildCount => m_Children.Count;
-            internal override bool IsChecked => false;
-            internal override bool IsDisabled => false;
-            internal override bool IsSeparator => false;
-            internal override bool IsSubMenu => true;
+            public override void AddChild(RUIContextualMenuNodeData node) => m_Children.Add(node);
+            public override void Execute() => throw NoExecuteException;
+            public override List<RUIContextualMenuNodeData> Children => m_Children;
+            public override int ChildCount => m_Children.Count;
+            public override bool IsChecked => false;
+            public override bool IsDisabled => false;
+            public override bool IsSeparator => false;
+            public override bool IsSubMenu => true;
 
             internal void ConstructFromMenu(DropdownMenu dropdownMenu)
             {
@@ -109,7 +109,7 @@ namespace RUI
                 if (action.IsHidden()) return;
 
                 // Break Path
-                string[] pathElements = SplitPath(action.name);
+                string[] pathElements = SplitPathAndClean(action.name);
 
                 // Create New Node
                 ActionMenuNode newNode = new(pathElements[^1], action);
@@ -121,7 +121,7 @@ namespace RUI
             private void AddSeparatorNode(DropdownMenuSeparator separator)
             {
                 // Break Path
-                string[] pathElements = SplitPath(separator.subMenuPath);
+                string[] pathElements = SplitPathAndClean(separator.subMenuPath, true);
 
                 // Create New Node
                 SeparatorMenuNode newNode = new(pathElements[^1]);
@@ -139,18 +139,37 @@ namespace RUI
                     // Current Path Element
                     string currentPathElement = pathElements[i];
 
+                    // Is Last Index
+                    bool isFinalElement = i == endIndex;
+
                     // Find or Create Path Element
-                    RUIContextualMenuNodeData nodeIterator = null;
                     bool found = false;
-                    int childCount = currentNode.ChildCount;
-                    List<RUIContextualMenuNodeData> children = currentNode.Children;
-                    for (int j = 0; j < childCount; j++)
+                    RUIContextualMenuNodeData nodeIterator = null;
+                    if (currentPathElement == string.Empty)
                     {
-                        nodeIterator = children[j];
-                        if (nodeIterator.NodeName == currentPathElement)
+                        // The only case where "" is acceptable is when we're adding as separator to
+                        // the root menu.
+                        if (!isFinalElement)
                         {
-                            found = true;
-                            break;
+                            string errPath = string.Join('/', pathElements);
+                            throw new Exception(
+                                $"Path cannot contain double forward slashes {errPath}");
+                        }
+                        found = true;
+                        nodeIterator = currentNode;
+                    }
+                    else
+                    {
+                        int childCount = currentNode.ChildCount;
+                        List<RUIContextualMenuNodeData> children = currentNode.Children;
+                        for (int j = 0; j < childCount; j++)
+                        {
+                            nodeIterator = children[j];
+                            if (nodeIterator.NodeName == currentPathElement)
+                            {
+                                found = true;
+                                break;
+                            }
                         }
                     }
 
@@ -159,7 +178,7 @@ namespace RUI
                     {
                         RUIContextualMenuNodeData childToAdd;
                         // Add New Menu Node
-                        if (i == endIndex) childToAdd = newNode;
+                        if (isFinalElement) childToAdd = newNode;
                         // Add new Sub Menu Node
                         else childToAdd = new SubMenuNode(currentPathElement);
                         currentNode.AddChild(childToAdd);
@@ -167,7 +186,7 @@ namespace RUI
                     }
                     else
                     {
-                        if (i == endIndex)
+                        if (isFinalElement)
                         {
                             // Duplicate Path Found
                             if (newNode is SeparatorMenuNode)
@@ -187,11 +206,42 @@ namespace RUI
                 }
             }
 
-            private string[] SplitPath(string path)
+            private string[] SplitPathAndClean(string path, bool isSeparator = false)
             {
+                // Sanity
+                if (path == null) throw new Exception($"Invalid path menu {path}");
+
+                // Split 
                 string[] pathElements = path.Split('/');
-                if (pathElements.Length == 0) throw new Exception($"Invalid path menu {path}");
-                return pathElements;
+
+                // Calculate empty element count
+                int emptyCount = 0;
+                for (int i = 0; i < pathElements.Length; i++)
+                {
+                    if (pathElements[i] == string.Empty) emptyCount++;
+                }
+
+                // Remove empty elements, and if this is separator, add empty string to the end
+                string[] cleanedPathElements
+                    = new string[pathElements.Length - emptyCount + (isSeparator ? 1 : 0)];
+                int j = 0;
+                for (int i = 0; i < pathElements.Length; i++)
+                {
+                    if (pathElements[i] != string.Empty)
+                    {
+                        cleanedPathElements[j++] = pathElements[i];
+                    }
+                }
+                if (isSeparator) cleanedPathElements[j] = string.Empty;
+
+                // Sanity
+                if (cleanedPathElements.Length == 0)
+                {
+                    throw new Exception($"Invalid path menu {path}");
+                }
+
+                // Return eleaned path elements
+                return cleanedPathElements;
             }
         }
     }
