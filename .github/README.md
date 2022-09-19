@@ -59,3 +59,8 @@ private void OnEnable()
     ...
 }
 ```
+
+## Submenu Behavior
+When you hover your cursor over a menu item that has submenus, the submenus will open instantly.  If you then move your cursor outside of the menu item that opened the submenu, an invisible triangle will be created between your cursor and the new submenu.  This triangle represents a safe-zone for your cursor.  Even if it's hovering over a different menu item, the current submenu won't close.
+
+But that safe zone only lasts for 0.3 seconds by default.  That delay is set in RUIContextualMenuBox as a constant called `SafeZoneTimeoutSecs`.  I'm hoping to make that customizable, but if you need to change the behavior immediately, that's where it is.
