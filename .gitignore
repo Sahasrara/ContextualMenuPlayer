@@ -1,0 +1,12 @@
+# Ignore Everything
+/*
+
+# Except for:
+!.gitignore
+!.github
+!Plugins/**
+
+# Skip .meta and .DS_Store
+Plugins/**/*.meta
+Plugins/**/.DS_Store
+
