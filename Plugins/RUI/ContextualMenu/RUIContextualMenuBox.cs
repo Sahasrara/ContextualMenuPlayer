@@ -17,7 +17,9 @@ namespace RUI
         private RUIContextualMenu m_Root;
         private IMenuBoxParent m_Parent;
         private RUIContextualMenuItem m_LastSubMenuAttempt;
+        private RUIContextualMenuGrowDirection m_Direction;
 
+        public RUIContextualMenuGrowDirection Direction { get => m_Direction; }
         public RUIContextualMenu RootMenu { get => m_Root; }
 
         private RUIContextualMenuBox()
@@ -41,10 +43,13 @@ namespace RUI
             // Set Parent
             menuBox.m_Parent = ctx.parentElement;
 
+            // Set Direction
+            menuBox.m_Direction = ctx.direction;
+
             // Reset Layout 
             menuBox.style.top = -1;
             menuBox.style.left = -1;
-            menuBox.style.translate = StyleKeyword.None;
+            // menuBox.style.translate = StyleKeyword.None;
 
             // Add Items
             int childCount = ctx.menuData.ChildCount;
@@ -88,6 +93,7 @@ namespace RUI
             }
             toTearDown.m_Root = null;
             toTearDown.m_Parent = null;
+            toTearDown.m_Direction = RUIContextualMenuGrowDirection.SE;
             toTearDown.m_LastSubMenuAttempt = null;
         }
 
@@ -149,33 +155,73 @@ namespace RUI
             float viewportWidth = m_Root.resolvedStyle.width;
             float viewportHeight = m_Root.resolvedStyle.height;
 
-            // Position 
+            // Parent Rect
             Rect parentRect = m_Parent.AbsoluteRect();
-            Vector2 normalOrigin = new(parentRect.x + parentRect.width, parentRect.y);
-            Vector2 translatedOrigin = parentRect.position;
-            float distancePastBottomOfViewport
-                = Mathf.Max(0, parentRect.y + resolvedStyle.height - viewportHeight);
 
-            // Translation
-            float normalExtent = normalOrigin.x + this.resolvedStyle.width;
-            float translatedExtent = translatedOrigin.x - this.resolvedStyle.width;
-            bool canTranslate = translatedExtent >= 0;
-            bool mustTranslate = normalExtent > viewportWidth;
-
-            // Apply Position and Translation
-            if (mustTranslate || (m_Parent.IsTranslated() && canTranslate))
+            // X-Axis Position 
+            float normalOriginX = parentRect.x + parentRect.width;
+            float normalExtentX = normalOriginX + resolvedStyle.width;
+            float translatedOriginX = parentRect.x - resolvedStyle.width;
+            bool mustTranslateX = normalExtentX > viewportWidth;
+            bool willTranslateX;
+            if (!mustTranslateX)
             {
-                style.translate = new Translate(new Length(-100, LengthUnit.Percent), 0, 0);
-                style.left = new Length(parentRect.x, LengthUnit.Pixel);
-                style.top = new Length(
-                    parentRect.y - distancePastBottomOfViewport, LengthUnit.Pixel);
+                bool canTranslateX = translatedOriginX >= 0;
+                bool parentTranslatedX = m_Parent.Direction() switch
+                {
+                    RUIContextualMenuGrowDirection.NW or RUIContextualMenuGrowDirection.SW => true,
+                    _ => false,
+                };
+                willTranslateX = parentTranslatedX && canTranslateX;
             }
             else
             {
-                style.translate = new Translate(new Length(0, LengthUnit.Percent), 0, 0);
-                style.left = new Length(parentRect.x + parentRect.width, LengthUnit.Pixel);
-                style.top = new Length(
-                    parentRect.y - distancePastBottomOfViewport, LengthUnit.Pixel);
+                willTranslateX = true;
+            }
+            float finalX = willTranslateX
+                ? translatedOriginX
+                : normalOriginX
+                ;
+
+            // Y-Axis Position
+            float originY;
+            float extentY;
+            float distancePastViewport;
+            bool willTranslateY = m_Parent.Direction() switch
+            {
+                RUIContextualMenuGrowDirection.NE or RUIContextualMenuGrowDirection.NW => true,
+                _ => false,
+            };
+            if (willTranslateY)
+            {
+                extentY = parentRect.y + parentRect.height;
+                originY = extentY - resolvedStyle.height;
+                distancePastViewport = Mathf.Min(0, originY);
+            }
+            else
+            {
+                originY = parentRect.y;
+                extentY = originY + resolvedStyle.height;
+                distancePastViewport = Mathf.Max(0, extentY - viewportHeight);
+            }
+            float finalY = originY - distancePastViewport;
+
+            // Apply Position
+            style.left = new Length(finalX, LengthUnit.Pixel);
+            style.top = new Length(finalY, LengthUnit.Pixel);
+
+            // Store Direction
+            if (willTranslateX)
+            {
+                m_Direction = willTranslateY
+                    ? RUIContextualMenuGrowDirection.NW
+                    : RUIContextualMenuGrowDirection.SW;
+            }
+            else
+            {
+                m_Direction = willTranslateY
+                    ? RUIContextualMenuGrowDirection.NE
+                    : RUIContextualMenuGrowDirection.SE;
             }
         }
 
@@ -184,12 +230,13 @@ namespace RUI
             public RUIContextualMenuNodeData menuData;
             public RUIContextualMenu rootMenu;
             public IMenuBoxParent parentElement;
+            public RUIContextualMenuGrowDirection direction;
         }
     }
 
     internal interface IMenuBoxParent
     {
-        bool IsTranslated();
+        RUIContextualMenuGrowDirection Direction();
         Rect AbsoluteRect();
     }
 }

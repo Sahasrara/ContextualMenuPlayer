@@ -1,5 +1,5 @@
 :root {
-    --contextual-menu-item-font-size: 14px;
+    --contextual-menu-item-font-size: 18px;
     --contextual-menu-border-radius: 6px;
     --contextual-menu-icon-margin-right: 6px;
     --contextual-menu-label-side-padding: 12px;

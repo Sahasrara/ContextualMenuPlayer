@@ -149,7 +149,7 @@ namespace RUI
             }
         }
 
-        bool IMenuBoxParent.IsTranslated() => m_ParentMenu.resolvedStyle.translate.x < 0;
+        RUIContextualMenuGrowDirection IMenuBoxParent.Direction() => m_ParentMenu.Direction;
         Rect IMenuBoxParent.AbsoluteRect()
         {
             Rect menuBoxRect = this.m_ParentMenu.layout;

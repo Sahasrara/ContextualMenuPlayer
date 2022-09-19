@@ -32,6 +32,7 @@ namespace RUI
                 position = ((IMouseEvent)triggerEvent).mousePosition,
                 styleSheetOverride = m_StyleSheet,
                 root = GetElementRoot((VisualElement)triggerEvent.target),
+                direction = RUIContextualMenuGrowDirection.SE,
             });
         }
 

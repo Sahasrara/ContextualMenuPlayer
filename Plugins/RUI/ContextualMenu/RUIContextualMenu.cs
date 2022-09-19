@@ -28,6 +28,7 @@ namespace RUI
         private Vector2 m_OriginalClickPoint;
         private float m_OpenTime;
         private bool m_OpenClickComplete;
+        private RUIContextualMenuGrowDirection m_Direction;
 
         private RUIContextualMenu() : base()
         {
@@ -51,6 +52,9 @@ namespace RUI
             // Set Click Point
             menu.m_OriginalClickPoint = ctx.position;
 
+            // Set Direction
+            menu.m_Direction = ctx.direction;
+
             // Style
             menu.styleSheets.Add(ctx.styleSheetOverride ?? DefaultStyle);
 
@@ -66,6 +70,7 @@ namespace RUI
                 menuData = menu.m_MenuTreeData,
                 rootMenu = menu,
                 parentElement = menu,
+                direction = ctx.direction,
             });
 
             // Add to Root 
@@ -92,6 +97,7 @@ namespace RUI
             toTearDown.m_Closer.UnregisterCallback<MouseUpEvent>(toTearDown.OnMouseUp);
             toTearDown.m_OpenTime = 0f;
             toTearDown.m_OpenClickComplete = false;
+            toTearDown.m_Direction = RUIContextualMenuGrowDirection.SE;
             toTearDown.styleSheets.Clear();
             toTearDown.m_MenuTreeData = null;
             toTearDown.m_RootMenuBox = null;
@@ -99,7 +105,7 @@ namespace RUI
 
         internal void Close() => ReleaseToPool(this);
 
-        bool IMenuBoxParent.IsTranslated() => false;
+        RUIContextualMenuGrowDirection IMenuBoxParent.Direction() => m_Direction;
         Rect IMenuBoxParent.AbsoluteRect() => new(m_OriginalClickPoint, Vector2.zero);
 
         private void OnMouseUp(MouseUpEvent evt)
@@ -120,6 +126,15 @@ namespace RUI
             public DropdownMenu menu;
             public StyleSheet styleSheetOverride;
             public VisualElement root;
+            public RUIContextualMenuGrowDirection direction;
         }
+    }
+
+    public enum RUIContextualMenuGrowDirection
+    {
+        SE,
+        NE,
+        SW,
+        NW,
     }
 }
