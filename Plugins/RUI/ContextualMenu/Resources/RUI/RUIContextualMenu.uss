@@ -1,0 +1,112 @@
+:root {
+    --contextual-menu-item-font-size: 14px;
+    --contextual-menu-border-radius: 6px;
+    --contextual-menu-icon-margin-right: 6px;
+    --contextual-menu-label-side-padding: 12px;
+    --contextual-menu-label-topbot-padding: 6px;
+
+    /* Dark Theme */
+    --contextual-menu-font-color: white;
+    --contextual-menu-font-color-disabled: #656468;
+    --contextual-menu-border-color: #515053;
+    --contextual-menu-background-color: #262529;
+    --contextual-menu-hover-color: #2857b2;
+    --contextual-menu-active-color: #20468e;
+
+    /* Light Theme */
+    /* --contextual-menu-border-color: rgb(147, 147, 147); */
+    /* --contextual-menu-font-color-disabled: rgb(107, 101, 105); */
+    /* --contextual-menu-background-color: rgb(171, 165, 169); */
+    /* --contextual-menu-font-color: rgb(255, 255, 255);  */
+    /* --contextual-menu-hover-color: rgb(51, 112, 206); */
+    /* --contextual-menu-active-color: rgb(41, 91, 169); */
+}
+
+.contextual-menu-viewport {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+}
+
+.contextual-menu-box {
+    position: absolute;
+    max-width: 25%;
+    flex: none;
+    padding-left: 8px;
+    padding-right: 8px;
+    padding-top: 11px;
+    padding-bottom: 11px;
+    border-radius: var(--contextual-menu-border-radius);
+    border-width: 1px;
+    border-color: var(--contextual-menu-border-color);
+    background-color: var(--contextual-menu-background-color);
+}
+
+.contextual-menu-item-container {
+    flex-grow: 1;
+    flex-direction: row;
+    min-width: 175px;
+    border-radius: var(--contextual-menu-border-radius);
+    background-color: var(--contextual-menu-background-color);
+    color: var(--contextual-menu-font-color);
+}
+
+.contextual-menu-item-container:active {
+    background-color: var(--contextual-menu-active-color);
+}
+
+.contextual-menu-item-container:hover {
+    background-color: var(--contextual-menu-hover-color);
+}
+
+.contextual-menu-item-container:disabled {
+    color: var(--contextual-menu-font-color-disabled);
+}
+
+.contextual-menu-item-label {
+    padding-left: var(--contextual-menu-label-side-padding);
+    padding-right: var(--contextual-menu-label-side-padding);
+    padding-top: var(--contextual-menu-label-topbot-padding);
+    padding-bottom: var(--contextual-menu-label-topbot-padding);
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: var(--contextual-menu-item-font-size);
+    flex-shrink: 1;
+    -unity-text-align: middle-left;
+}
+
+.contextual-menu-item-icon {
+    margin-left: auto;
+}
+
+.contextual-menu-item-icon-separator {
+    width: 85%;
+    height: 0px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    border-bottom-width: 2px;
+    border-bottom-color: var(--contextual-menu-border-color);
+}
+
+.contextual-menu-item-icon-submenu {
+    top: 50%;
+    translate: 0 -50%;
+    margin-right: var(--contextual-menu-icon-margin-right);
+    width: var(--contextual-menu-item-font-size);
+    height: var(--contextual-menu-item-font-size);
+    background-image: url('project://database/Assets/UI%20Toolkit/UnityThemes/UnityDefaultRuntimeTheme.tss?fileID=-1087164816274819069&guid=bf814613124cf45699cb91d98183bb04&type=3#arrow-right@2x');
+}
+
+.contextual-menu-item-icon-checked {
+    top: 50%;
+    translate: 0 -50%;
+    margin-right: var(--contextual-menu-icon-margin-right);
+    width: var(--contextual-menu-item-font-size);
+    height: var(--contextual-menu-item-font-size);
+    background-image: url('project://database/Assets/UI%20Toolkit/UnityThemes/UnityDefaultRuntimeTheme.tss?fileID=7433338533053954386&guid=bf814613124cf45699cb91d98183bb04&type=3#check@2x');
+}

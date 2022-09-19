@@ -4,9 +4,9 @@
 # Except for:
 !.gitignore
 !.github
-!Plugins/**
+!Plugins
 
 # Skip .meta and .DS_Store
-Plugins/**/*.meta
-Plugins/**/.DS_Store
+*.meta
+.DS_Store
 
