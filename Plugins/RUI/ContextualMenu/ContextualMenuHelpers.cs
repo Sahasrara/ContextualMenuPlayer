@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace RUI
+namespace ContextualMenuPlayer
 {
     internal static class Helpers
     {
@@ -40,7 +40,7 @@ namespace RUI
             float yMax = sy0 > sy1 ? (sy0 > sy2 ? sy0 : sy2) : (sy1 > sy2 ? sy1 : sy2);
             float xMin = sx0 < sx1 ? (sx0 < sx2 ? sx0 : sx2) : (sx1 < sx2 ? sx1 : sx2);
             float yMin = sy0 < sy1 ? (sy0 < sy2 ? sy0 : sy2) : (sy1 < sy2 ? sy1 : sy2);
-            return new Rect(xMin, yMin, xMax - xMin, yMax - yMin);
+            return new(xMin, yMin, xMax - xMin, yMax - yMin);
         }
 
         public bool ContainsPoint(Vector2 p)

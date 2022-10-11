@@ -2,18 +2,18 @@ using System.Reflection;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace RUI
+namespace ContextualMenuPlayer
 {
     //
     // Summary:
     //     Manipulator that displays a contextual menu when the user clicks the right mouse
     //     button or presses the menu key on the keyboard.
-    public class RUIContextualMenuManipulator : MouseManipulator
+    public class ContextualMenuManipulator : MouseManipulator
     {
         // Cached Reflection Data
-        private static readonly object[] s_ArgumentTrue = new object[] { true };
-        private static readonly object[] s_ArgumentFalse = new object[] { false };
-        private readonly RUIContextualMenuManager m_ContextualMenuManager;
+        private static readonly object[] s_ArgumentTrue = { true };
+        private static readonly object[] s_ArgumentFalse = { false };
+        private readonly ContextualMenuManager m_ContextualMenuManager;
         private PropertyInfo m_PropertyDisplayMenuHandledOSX;
         private MethodInfo m_PropertyDisplayMenuHandledOSXGetter;
         private MethodInfo m_PropertyDisplayMenuHandledOSXSetter;
@@ -33,17 +33,17 @@ namespace RUI
             }
         }
 
-        public RUIContextualMenuManipulator() : this(new RUIContextualMenuManager()) { }
-        public RUIContextualMenuManipulator(RUIContextualMenuManager contextualMenuManager)
+        public ContextualMenuManipulator() : this(new()) { }
+        public ContextualMenuManipulator(ContextualMenuManager contextualMenuManager)
         {
-            activators.Add(new ManipulatorActivationFilter
+            activators.Add(new()
             {
                 button = MouseButton.RightMouse
             });
             if (Application.platform == RuntimePlatform.OSXEditor
                 || Application.platform == RuntimePlatform.OSXPlayer)
             {
-                activators.Add(new ManipulatorActivationFilter
+                activators.Add(new()
                 {
                     button = MouseButton.LeftMouse,
                     modifiers = EventModifiers.Control
@@ -60,12 +60,12 @@ namespace RUI
             if (Application.platform == RuntimePlatform.OSXEditor
                 || Application.platform == RuntimePlatform.OSXPlayer)
             {
-                base.target.RegisterCallback<MouseDownEvent>(OnMouseDownEventOSX);
-                base.target.RegisterCallback<MouseUpEvent>(OnMouseUpEventOSX);
+                target.RegisterCallback<MouseDownEvent>(OnMouseDownEventOSX);
+                target.RegisterCallback<MouseUpEvent>(OnMouseUpEventOSX);
             }
             else
             {
-                base.target.RegisterCallback<MouseUpEvent>(OnMouseUpDownEvent);
+                target.RegisterCallback<MouseUpEvent>(OnMouseUpDownEvent);
             }
         }
 
@@ -77,12 +77,12 @@ namespace RUI
             if (Application.platform == RuntimePlatform.OSXEditor
                 || Application.platform == RuntimePlatform.OSXPlayer)
             {
-                base.target.UnregisterCallback<MouseDownEvent>(OnMouseDownEventOSX);
-                base.target.UnregisterCallback<MouseUpEvent>(OnMouseUpEventOSX);
+                target.UnregisterCallback<MouseDownEvent>(OnMouseDownEventOSX);
+                target.UnregisterCallback<MouseUpEvent>(OnMouseUpEventOSX);
             }
             else
             {
-                base.target.UnregisterCallback<MouseUpEvent>(OnMouseUpDownEvent);
+                target.UnregisterCallback<MouseUpEvent>(OnMouseUpDownEvent);
             }
         }
 
@@ -120,7 +120,7 @@ namespace RUI
 
         private void CacheReflectionData()
         {
-            m_PropertyDisplayMenuHandledOSX = typeof(ContextualMenuManager).GetProperty(
+            m_PropertyDisplayMenuHandledOSX = typeof(UnityEngine.UIElements.ContextualMenuManager).GetProperty(
                 "displayMenuHandledOSX", BindingFlags.NonPublic | BindingFlags.Instance);
             m_PropertyDisplayMenuHandledOSXGetter = m_PropertyDisplayMenuHandledOSX
                 .GetGetMethod(nonPublic: true);

@@ -2,14 +2,14 @@ using System;
 using NUnit.Framework;
 using UnityEngine.UIElements;
 
-namespace RUI
+namespace ContextualMenuPlayer
 {
-    public class RUIContextualMenuDataNodeTests
+    public class ContextualMenuDataNodeTests
     {
         [Test]
         public void TrailingSlash()
         {
-            RUIContextualMenuNodeData rootNode = GenerateSingleActionNoopTree("test/");
+            ContextualMenuNodeData rootNode = GenerateSingleActionNoopTree("test/");
             Assert.AreEqual(1, CountChildren(rootNode));
             Assert.AreEqual("test", rootNode.Children[0].NodeName);
         }
@@ -17,7 +17,7 @@ namespace RUI
         [Test]
         public void LeadingSlash()
         {
-            RUIContextualMenuNodeData rootNode = GenerateSingleActionNoopTree("/test");
+            ContextualMenuNodeData rootNode = GenerateSingleActionNoopTree("/test");
             Assert.AreEqual(1, CountChildren(rootNode));
             Assert.AreEqual("test", rootNode.Children[0].NodeName);
         }
@@ -25,7 +25,7 @@ namespace RUI
         [Test]
         public void LeadingAndTrailingSlash()
         {
-            RUIContextualMenuNodeData rootNode = GenerateSingleActionNoopTree("/test/");
+            ContextualMenuNodeData rootNode = GenerateSingleActionNoopTree("/test/");
             Assert.AreEqual(1, CountChildren(rootNode));
             Assert.AreEqual("test", rootNode.Children[0].NodeName);
         }
@@ -33,7 +33,7 @@ namespace RUI
         [Test]
         public void NestedSeparatorOnly()
         {
-            RUIContextualMenuNodeData rootNode = GenerateSingleSeparatorTree("test");
+            ContextualMenuNodeData rootNode = GenerateSingleSeparatorTree("test");
             Assert.AreEqual(3, CountChildren(rootNode));
             Assert.IsTrue(rootNode.Children[1].Children[0].IsSeparator);
         }
@@ -41,7 +41,7 @@ namespace RUI
         [Test]
         public void NestedDoubleSlash()
         {
-            RUIContextualMenuNodeData rootNode = GenerateSingleActionNoopTree(
+            ContextualMenuNodeData rootNode = GenerateSingleActionNoopTree(
                 "Double Slash Test//Nested");
             Assert.AreEqual(1, CountChildren(rootNode));
             Assert.AreEqual("Nested", rootNode.Children[0].Children[0].NodeName);
@@ -50,7 +50,7 @@ namespace RUI
         [Test]
         public void NestedTrailingSlash()
         {
-            RUIContextualMenuNodeData rootNode = GenerateSingleActionNoopTree(
+            ContextualMenuNodeData rootNode = GenerateSingleActionNoopTree(
                 "Trailing Slash Test/Test/");
             Assert.AreEqual(1, CountChildren(rootNode));
             Assert.AreEqual("Test", rootNode.Children[0].Children[0].NodeName);
@@ -59,7 +59,7 @@ namespace RUI
         [Test]
         public void NestedTrailingDoubleSlash()
         {
-            RUIContextualMenuNodeData rootNode = GenerateSingleActionNoopTree(
+            ContextualMenuNodeData rootNode = GenerateSingleActionNoopTree(
                 "Double Slash Test//");
             Assert.AreEqual(1, CountChildren(rootNode));
             Assert.AreEqual("Double Slash Test", rootNode.Children[0].NodeName);
@@ -103,8 +103,8 @@ namespace RUI
             testMenu.PrepareForDisplay(null);
 
             // Construct Menu Data 
-            RUIContextualMenuNodeData rootNode
-                = RUIContextualMenuNodeData.ConstructMenuTree(testMenu);
+            ContextualMenuNodeData rootNode
+                = ContextualMenuNodeData.ConstructMenuTree(testMenu);
 
             // Assert
             Assert.AreEqual(3, CountChildren(rootNode));
@@ -149,8 +149,8 @@ namespace RUI
             testMenu.PrepareForDisplay(null);
 
             // Construct Menu Data 
-            RUIContextualMenuNodeData rootNode
-                = RUIContextualMenuNodeData.ConstructMenuTree(testMenu);
+            ContextualMenuNodeData rootNode
+                = ContextualMenuNodeData.ConstructMenuTree(testMenu);
 
             // Assert
             Assert.AreEqual(18, CountChildren(rootNode));
@@ -165,7 +165,7 @@ namespace RUI
         private DropdownMenuAction.Status ReturnNone(DropdownMenuAction action)
             => DropdownMenuAction.Status.None;
 
-        private int CountChildren(RUIContextualMenuNodeData node)
+        private int CountChildren(ContextualMenuNodeData node)
         {
             if (!node.IsSubMenu) return 1;
             int count = 0;
@@ -173,15 +173,15 @@ namespace RUI
             return count;
         }
 
-        private RUIContextualMenuNodeData GenerateSingleActionNoopTree(string path)
+        private ContextualMenuNodeData GenerateSingleActionNoopTree(string path)
         {
             DropdownMenu testMenu = new();
             testMenu.AppendAction(path, NoOpMenuAction, DropdownMenuAction.AlwaysEnabled);
             testMenu.PrepareForDisplay(null);
-            return RUIContextualMenuNodeData.ConstructMenuTree(testMenu);
+            return ContextualMenuNodeData.ConstructMenuTree(testMenu);
         }
 
-        private RUIContextualMenuNodeData GenerateSingleSeparatorTree(string path)
+        private ContextualMenuNodeData GenerateSingleSeparatorTree(string path)
         {
             DropdownMenu testMenu = new();
             // Can't add separator to empty list for some reason
@@ -190,7 +190,7 @@ namespace RUI
             testMenu.AppendAction(
                 "mnopqrstuvwxyz", NoOpMenuAction, DropdownMenuAction.AlwaysEnabled);
             testMenu.PrepareForDisplay(null);
-            return RUIContextualMenuNodeData.ConstructMenuTree(testMenu);
+            return ContextualMenuNodeData.ConstructMenuTree(testMenu);
         }
     }
 }

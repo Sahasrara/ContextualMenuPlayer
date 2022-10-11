@@ -3,39 +3,38 @@ using UnityEngine;
 using UnityEngine.Pool;
 using UnityEngine.UIElements;
 
-namespace RUI
+namespace ContextualMenuPlayer
 {
-    internal class RUIContextualMenuBox : VisualElement
+    internal class ContextualMenuBox : VisualElement
     {
-        private const float SafeZoneTimeoutSecs = 0.3f;
-        private const long SafeZoneTimeoutMSecs = (long)(SafeZoneTimeoutSecs * 1000);
-        private static readonly ObjectPool<RUIContextualMenuBox> s_MenuBoxPool =
-            new(Create, null, TearDown);
+        private const float k_SafeZoneTimeoutSecs = 0.3f;
+        private const long k_SafeZoneTimeoutMSecs = (long)(k_SafeZoneTimeoutSecs * 1000);
+        private static readonly ObjectPool<ContextualMenuBox> s_MenuBoxPool = new(Create, null, TearDown);
         private readonly IVisualElementScheduledItem m_RetrySubMenuOpen;
         private float m_SubMenuCreateTime;
         private Triangle m_SubMenuTemporarySafeZone;
-        private RUIContextualMenu m_Root;
+        private ContextualMenu m_Root;
         private IMenuBoxParent m_Parent;
-        private RUIContextualMenuItem m_LastSubMenuAttempt;
+        private ContextualMenuItem m_LastSubMenuAttempt;
         private RUIContextualMenuGrowDirection m_Direction;
 
-        public RUIContextualMenuGrowDirection Direction { get => m_Direction; }
-        public RUIContextualMenu RootMenu { get => m_Root; }
+        public RUIContextualMenuGrowDirection Direction => m_Direction;
+        public ContextualMenu RootMenu => m_Root;
 
-        private RUIContextualMenuBox()
+        private ContextualMenuBox()
         {
             AddToClassList("contextual-menu-box");
 
             // Temporary Safe Zone
-            m_SubMenuCreateTime = 2 * (-SafeZoneTimeoutSecs);
+            m_SubMenuCreateTime = 2 * (-k_SafeZoneTimeoutSecs);
             m_RetrySubMenuOpen = schedule.Execute(RetryTryOpenSubMenu);
             m_RetrySubMenuOpen.Pause();
         }
 
-        internal static RUIContextualMenuBox GetFromPool(MenuBoxCreationContext ctx)
+        internal static ContextualMenuBox GetFromPool(MenuBoxCreationContext ctx)
         {
             // Grab from Pool
-            RUIContextualMenuBox menuBox = s_MenuBoxPool.Get();
+            ContextualMenuBox menuBox = s_MenuBoxPool.Get();
 
             // Set Root
             menuBox.m_Root = ctx.rootMenu;
@@ -53,14 +52,14 @@ namespace RUI
 
             // Add Items
             int childCount = ctx.menuData.ChildCount;
-            List<RUIContextualMenuNodeData> itemsData = ctx.menuData.Children;
+            List<ContextualMenuNodeData> itemsData = ctx.menuData.Children;
             for (int i = 0; i < childCount; i++)
             {
                 // Grab Menu Data
-                RUIContextualMenuNodeData itemData = itemsData[i];
+                ContextualMenuNodeData itemData = itemsData[i];
 
                 // Create Item
-                RUIContextualMenuItem itemElement = RUIContextualMenuItem.GetFromPool(new()
+                ContextualMenuItem itemElement = ContextualMenuItem.GetFromPool(new()
                 {
                     itemData = itemData,
                     parentMenu = menuBox,
@@ -79,17 +78,17 @@ namespace RUI
             // Return
             return menuBox;
         }
-        internal static void ReleaseToPool(RUIContextualMenuBox menuBox)
+        internal static void ReleaseToPool(ContextualMenuBox menuBox)
             => s_MenuBoxPool.Release(menuBox);
 
-        private static RUIContextualMenuBox Create() => new();
-        private static void TearDown(RUIContextualMenuBox toTearDown)
+        private static ContextualMenuBox Create() => new();
+        private static void TearDown(ContextualMenuBox toTearDown)
         {
             toTearDown.UnregisterCallback<GeometryChangedEvent>(toTearDown.OnGeometryChanged);
             toTearDown.RemoveFromHierarchy();
             for (int i = toTearDown.childCount - 1; i >= 0; i--)
             {
-                RUIContextualMenuItem.ReleaseToPool(toTearDown[i] as RUIContextualMenuItem);
+                ContextualMenuItem.ReleaseToPool(toTearDown[i] as ContextualMenuItem);
             }
             toTearDown.m_Root = null;
             toTearDown.m_Parent = null;
@@ -107,12 +106,12 @@ namespace RUI
 
         internal bool IsInSafeZone(Vector2 point)
         {
-            bool requiresSafeCheck = (Time.time - m_SubMenuCreateTime) < SafeZoneTimeoutSecs;
+            bool requiresSafeCheck = (Time.time - m_SubMenuCreateTime) < k_SafeZoneTimeoutSecs;
             bool isSafe = requiresSafeCheck && m_SubMenuTemporarySafeZone.ContainsPoint(point);
             return isSafe;
         }
 
-        internal void TryOpenSubMenu(RUIContextualMenuItem item, Vector2 mousePosition)
+        internal void TryOpenSubMenu(ContextualMenuItem item, Vector2 mousePosition)
         {
             if (!IsInSafeZone(mousePosition))
             {
@@ -124,17 +123,17 @@ namespace RUI
             if (m_LastSubMenuAttempt != item)
             {
                 m_LastSubMenuAttempt = item;
-                m_RetrySubMenuOpen.ExecuteLater(SafeZoneTimeoutMSecs);
+                m_RetrySubMenuOpen.ExecuteLater(k_SafeZoneTimeoutMSecs);
             }
         }
 
         internal void Close() => ReleaseToPool(this);
         internal void CloseRoot() => m_Root.Close();
-        internal void CloseSubMenus(RUIContextualMenuItem excluding = null)
+        internal void CloseSubMenus(ContextualMenuItem excluding = null)
         {
-            for (int i = 0; i < this.childCount; i++)
+            for (int i = 0; i < childCount; i++)
             {
-                RUIContextualMenuItem childItem = this[i] as RUIContextualMenuItem;
+                ContextualMenuItem childItem = this[i] as ContextualMenuItem;
                 if (childItem != excluding) childItem.CloseSubMenu();
             }
         }
@@ -227,8 +226,8 @@ namespace RUI
 
         internal struct MenuBoxCreationContext
         {
-            public RUIContextualMenuNodeData menuData;
-            public RUIContextualMenu rootMenu;
+            public ContextualMenuNodeData menuData;
+            public ContextualMenu rootMenu;
             public IMenuBoxParent parentElement;
             public RUIContextualMenuGrowDirection direction;
         }

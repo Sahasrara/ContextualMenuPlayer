@@ -3,27 +3,27 @@ using UnityEngine;
 using UnityEngine.Pool;
 using UnityEngine.UIElements;
 
-namespace RUI
+namespace ContextualMenuPlayer
 {
-    public class RUIContextualMenuItem : VisualElement, IMenuBoxParent
+    public class ContextualMenuItem : VisualElement, IMenuBoxParent
     {
-        private readonly static ObjectPool<RUIContextualMenuItem> s_Pool
+        private static readonly ObjectPool<ContextualMenuItem> s_Pool
             = new(Create, null, TearDown);
         private readonly Label m_Label;
         private readonly VisualElement m_Icon;
         private Action m_OnClick;
-        private RUIContextualMenuNodeData m_ItemData;
-        private RUIContextualMenuBox m_ParentMenu;
-        private RUIContextualMenuBox m_SubMenu;
+        private ContextualMenuNodeData m_ItemData;
+        private ContextualMenuBox m_ParentMenu;
+        private ContextualMenuBox m_SubMenu;
         private bool m_MouseIsHovering;
 
         public string MenuText { get => m_Label.text; set => m_Label.text = value; }
         public bool MouseIsHovering { get => m_MouseIsHovering; }
 
-        internal static RUIContextualMenuItem GetFromPool(MenuBoxItemCreationContext ctx)
+        internal static ContextualMenuItem GetFromPool(MenuBoxItemCreationContext ctx)
         {
             // Get Item from Pool
-            RUIContextualMenuItem menuItem = s_Pool.Get();
+            ContextualMenuItem menuItem = s_Pool.Get();
 
             // Set Parent Menu
             menuItem.m_ParentMenu = ctx.parentMenu;
@@ -74,11 +74,11 @@ namespace RUI
             return menuItem;
         }
 
-        internal static void ReleaseToPool(RUIContextualMenuItem toRelease)
+        internal static void ReleaseToPool(ContextualMenuItem toRelease)
             => s_Pool.Release(toRelease);
 
-        private static RUIContextualMenuItem Create() => new();
-        private static void TearDown(RUIContextualMenuItem toTearDown)
+        private static ContextualMenuItem Create() => new();
+        private static void TearDown(ContextualMenuItem toTearDown)
         {
             toTearDown.CloseSubMenu();
             toTearDown.RemoveFromHierarchy();
@@ -97,11 +97,11 @@ namespace RUI
             toTearDown.m_Icon.RemoveFromClassList("contextual-menu-item-icon-separator");
         }
 
-        public RUIContextualMenuItem()
+        public ContextualMenuItem()
         {
             // Structure
-            m_Label = new Label();
-            m_Icon = new VisualElement();
+            m_Label = new();
+            m_Icon = new();
             Add(m_Label);
             Add(m_Icon);
 
@@ -130,7 +130,7 @@ namespace RUI
                 if (m_SubMenu == null)
                 {
                     // Create Sub Menu
-                    m_SubMenu = RUIContextualMenuBox.GetFromPool(new()
+                    m_SubMenu = ContextualMenuBox.GetFromPool(new()
                     {
                         menuData = m_ItemData,
                         rootMenu = m_ParentMenu.RootMenu,
@@ -144,7 +144,7 @@ namespace RUI
         {
             if (m_SubMenu != null)
             {
-                RUIContextualMenuBox.ReleaseToPool(m_SubMenu);
+                ContextualMenuBox.ReleaseToPool(m_SubMenu);
                 m_SubMenu = null;
             }
         }
@@ -152,8 +152,8 @@ namespace RUI
         RUIContextualMenuGrowDirection IMenuBoxParent.Direction() => m_ParentMenu.Direction;
         Rect IMenuBoxParent.AbsoluteRect()
         {
-            Rect menuBoxRect = this.m_ParentMenu.layout;
-            Rect itemRect = this.layout;
+            Rect menuBoxRect = m_ParentMenu.layout;
+            Rect itemRect = layout;
             Vector2 menuBoxPosition
                 = m_ParentMenu.resolvedStyle.translate + (Vector3)menuBoxRect.min;
             return new(
@@ -214,8 +214,8 @@ namespace RUI
 
         internal struct MenuBoxItemCreationContext
         {
-            public RUIContextualMenuNodeData itemData;
-            public RUIContextualMenuBox parentMenu;
+            public ContextualMenuNodeData itemData;
+            public ContextualMenuBox parentMenu;
         }
     }
 }

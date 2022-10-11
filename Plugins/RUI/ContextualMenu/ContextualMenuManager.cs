@@ -1,21 +1,21 @@
 using UnityEngine.UIElements;
 
-namespace RUI
+namespace ContextualMenuPlayer
 {
-    public class RUIContextualMenuManager : ContextualMenuManager
+    public class ContextualMenuManager : UnityEngine.UIElements.ContextualMenuManager
     {
         private readonly StyleSheet m_StyleSheet;
 
-        public RUIContextualMenuManager() : this(null) { }
-        public RUIContextualMenuManager(StyleSheet styleSheet)
+        public ContextualMenuManager() : this(null) { }
+        public ContextualMenuManager(StyleSheet styleSheet)
         {
             m_StyleSheet = styleSheet;
         }
 
         // Do actual display here so it can be used independently of manipulator events
-        public void DisplayMenu(RUIContextualMenu.MenuCreationContext creationContext)
+        public void DisplayMenu(ContextualMenu.MenuCreationContext creationContext)
         {
-            RUIContextualMenu.OpenMenu(creationContext);
+            ContextualMenu.OpenMenu(creationContext);
         }
 
         // NOTE: I've only seen this used in the context of GraphView. Leaving for now.

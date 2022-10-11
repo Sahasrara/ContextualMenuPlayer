@@ -2,13 +2,13 @@ using UnityEngine;
 using UnityEngine.Pool;
 using UnityEngine.UIElements;
 
-namespace RUI
+namespace ContextualMenuPlayer
 {
-    public class RUIContextualMenu : VisualElement, IMenuBoxParent
+    public class ContextualMenu : VisualElement, IMenuBoxParent
     {
-        private static readonly ObjectPool<RUIContextualMenu> s_ContextualMenuPool
+        private static readonly ObjectPool<ContextualMenu> s_ContextualMenuPool
             = new(Create, null, TearDown);
-        private static int s_PoolCount = 0;
+        private static int s_PoolCount;
         private static StyleSheet s_DefaultStyle;
         private static StyleSheet DefaultStyle
         {
@@ -23,14 +23,14 @@ namespace RUI
         }
 
         private readonly VisualElement m_Closer;
-        private RUIContextualMenuBox m_RootMenuBox;
-        private RUIContextualMenuNodeData m_MenuTreeData;
+        private ContextualMenuBox m_RootMenuBox;
+        private ContextualMenuNodeData m_MenuTreeData;
         private Vector2 m_OriginalClickPoint;
         private float m_OpenTime;
         private bool m_OpenClickComplete;
         private RUIContextualMenuGrowDirection m_Direction;
 
-        private RUIContextualMenu() : base()
+        private ContextualMenu()
         {
             name = "contextual-menu-" + s_PoolCount++;
             AddToClassList("contextual-menu-viewport");
@@ -40,10 +40,10 @@ namespace RUI
             this.Add(m_Closer);
         }
 
-        public static RUIContextualMenu GetFromPool(MenuCreationContext ctx)
+        public static ContextualMenu GetFromPool(MenuCreationContext ctx)
         {
             // Create Menu Container
-            RUIContextualMenu menu = s_ContextualMenuPool.Get();
+            ContextualMenu menu = s_ContextualMenuPool.Get();
 
             // Set Open Time
             menu.m_OpenTime = Time.time;
@@ -59,13 +59,13 @@ namespace RUI
             menu.styleSheets.Add(ctx.styleSheetOverride ?? DefaultStyle);
 
             // Parse Tree Data
-            menu.m_MenuTreeData = RUIContextualMenuNodeData.ConstructMenuTree(ctx.menu);
+            menu.m_MenuTreeData = ContextualMenuNodeData.ConstructMenuTree(ctx.menu);
 
             // Register Event Handlers 
             menu.m_Closer.RegisterCallback<MouseUpEvent>(menu.OnMouseUp);
 
             // Open Menu
-            menu.m_RootMenuBox = RUIContextualMenuBox.GetFromPool(new()
+            menu.m_RootMenuBox = ContextualMenuBox.GetFromPool(new()
             {
                 menuData = menu.m_MenuTreeData,
                 rootMenu = menu,
@@ -80,7 +80,7 @@ namespace RUI
             return menu;
         }
 
-        public static void ReleaseToPool(RUIContextualMenu toRelease)
+        public static void ReleaseToPool(ContextualMenu toRelease)
             => s_ContextualMenuPool.Release(toRelease);
 
         internal static void OpenMenu(MenuCreationContext creationContext)
@@ -89,10 +89,10 @@ namespace RUI
             GetFromPool(creationContext);
         }
 
-        private static RUIContextualMenu Create() => new();
-        private static void TearDown(RUIContextualMenu toTearDown)
+        private static ContextualMenu Create() => new();
+        private static void TearDown(ContextualMenu toTearDown)
         {
-            RUIContextualMenuBox.ReleaseToPool(toTearDown.m_RootMenuBox);
+            ContextualMenuBox.ReleaseToPool(toTearDown.m_RootMenuBox);
             toTearDown.RemoveFromHierarchy();
             toTearDown.m_Closer.UnregisterCallback<MouseUpEvent>(toTearDown.OnMouseUp);
             toTearDown.m_OpenTime = 0f;
