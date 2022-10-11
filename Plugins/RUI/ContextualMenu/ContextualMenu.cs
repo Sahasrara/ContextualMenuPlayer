@@ -16,7 +16,7 @@ namespace ContextualMenuPlayer
             {
                 if (s_DefaultStyle == null)
                 {
-                    s_DefaultStyle = Resources.Load<StyleSheet>("RUI/RUIContextualMenu");
+                    s_DefaultStyle = Resources.Load<StyleSheet>("ContextualMenu/ContextualMenu");
                 }
                 return s_DefaultStyle;
             }
@@ -34,10 +34,10 @@ namespace ContextualMenuPlayer
         {
             name = "contextual-menu-" + s_PoolCount++;
             AddToClassList("contextual-menu-viewport");
-            m_Closer = new VisualElement();
+            m_Closer = new();
             m_Closer.AddToClassList("contextual-menu-viewport");
             m_Closer.name = "menu-closer";
-            this.Add(m_Closer);
+            Add(m_Closer);
         }
 
         public static ContextualMenu GetFromPool(MenuCreationContext ctx)
