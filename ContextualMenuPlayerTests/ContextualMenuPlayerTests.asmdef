@@ -1,11 +1,11 @@
 {
-    "name": "Tests",
+    "name": "ContextualMenuPlayerTests",
     "rootNamespace": "",
     "references": [
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
-        "ContextualMenu",
-        "UnityEngine.UI"
+        "UnityEngine.UI",
+        "ContextualMenuPlayer"
     ],
     "includePlatforms": [
         "Editor"
