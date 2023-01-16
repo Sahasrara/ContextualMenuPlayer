@@ -36,6 +36,8 @@ namespace ContextualMenuPlayer
             {
                 menuItem.m_Label.style.display = DisplayStyle.None;
                 menuItem.m_Icon.AddToClassList("contextual-menu-item-icon-separator");
+                // add new class to disable hover effect
+                menuItem.AddToClassList("contextual-menu-item-container-separator");
             }
             else
             {

@@ -82,6 +82,13 @@
     margin-left: auto;
 }
 
+.contextual-menu-item-container-separator {
+}
+
+.contextual-menu-item-container-separator:hover {
+    background-color: transparent;
+}
+
 .contextual-menu-item-icon-separator {
     width: 85%;
     height: 0px;
