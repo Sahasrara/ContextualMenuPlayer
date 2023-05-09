@@ -11,7 +11,7 @@ private void OnEnable()
     UIDocument uiDocument = GetComponent<UIDocument>();
 
     // Add RUIContextualMenuManipulator to the top level element you want be able to right click
-    uiDocument.rootVisualElement.AddManipulator(new RUIContextualMenuManipulator());
+    uiDocument.rootVisualElement.AddManipulator(new ContextualMenuPlayer.ContextualMenuManipulator());
 
     // Grab the element that you want to right click 
     VisualElement elementWithMenu  = uiDocument
@@ -41,7 +41,7 @@ private void PopulateMenuCallback(ContextualMenuPopulateEvent populateEvent)
     populateEvent.menu.AppendAction($"Option 4", NoOp, action => DropdownMenuAction.Status.Checked);
 }
 
-private void NoOp() {}
+private void NoOp(DropdownMenuAction obj) { }
 ```
 
 ## Custom Styling 
