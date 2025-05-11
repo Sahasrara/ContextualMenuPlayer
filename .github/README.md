@@ -4,8 +4,7 @@
 ## Note
 This project isn't actively maintained. I created in a few years back as I was starting to work on a dialogue system. I ended up using Electron to build the dialogue system so this little tool fell by the wayside.
 
-Incidentally, if you require a dialogue system, GameScript is free and open source and awesome.
-`https://github.com/ShortSleeveStudio/GameScript`
+Incidentally, if you require a dialogue system, [GameScript](https://github.com/ShortSleeveStudio/GameScript) is free and open source and awesome.
 
 ## Quick Start
 You can install this package with the Package Manager with this URL. Feel free to substitute the latest release:
