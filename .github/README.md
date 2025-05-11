@@ -1,61 +1,29 @@
 # Unity Runtime Contextual Menu
 ![screenshot](example.png)
 
+## Note
+This project isn't actively maintained. I created in a few years back as I was starting to work on a dialogue system. I ended up using Electron to build the dialogue system so this little tool fell by the wayside.
+
+Incidentally, if you require a dialogue system, GameScript is free and open source and awesome.
+`https://github.com/ShortSleeveStudio/GameScript`
+
 ## Quick Start
-```
-// Import the contents of the "Plugins" folder into your project's "Plugins" folder.
-// Write and add a MonoBehaviour to the same GameObject that has your UIDocument.
-private void OnEnable()
-{
-    // Grab document
-    UIDocument uiDocument = GetComponent<UIDocument>();
+You can install this package with the Package Manager with this URL. Feel free to substitute the latest release:
+`https://github.com/ShortSleeveStudio/FMODHelpers.git?path=/Packages/studio.shortsleeve.contextualmenuplayer#v0.0.0`
 
-    // Add RUIContextualMenuManipulator to the top level element you want be able to right click
-    uiDocument.rootVisualElement.AddManipulator(new RUIContextualMenuManipulator());
-
-    // Grab the element that you want to right click 
-    VisualElement elementWithMenu  = uiDocument
-        .rootVisualElement
-        .Q<VisualElement>(name: "element-with-menu");
-
-    // Register a callback to populate the context menu
-    elementWithMenu.RegisterCallback<ContextualMenuPopulateEvent>(PopulateMenuCallback);
-}
-...
-
-private void PopulateMenuCallback(ContextualMenuPopulateEvent populateEvent)
-{
-    // This will be a single top-level option 
-    populateEvent.menu.AppendAction("Option 1", NoOp, DropdownMenuAction.AlwaysEnabled);
-    // This will add a separator
-    populateEvent.menu.AppendSeparator();
-    // This will be nested 
-    populateEvent.menu.AppendAction($"Option 2/nested", NoOp, DropdownMenuAction.AlwaysEnabled);
-    // This will add a separator, again
-    populateEvent.menu.AppendSeparator();
-    // This will be disabled
-    populateEvent.menu.AppendAction($"Option 3", NoOp, DropdownMenuAction.AlwaysDisabled);
-    // This will add a separator, again
-    populateEvent.menu.AppendSeparator();
-    // This will be checked
-    populateEvent.menu.AppendAction($"Option 4", NoOp, action => DropdownMenuAction.Status.Checked);
-}
-
-private void NoOp() {}
-```
+Please open the test project to see a working example. You can copy the code from Tester.cs to form the basis of your integration.
 
 ## Custom Styling 
-All default styling is contained under: `Plugins/RUI/ContextualMenu/Resources/RUI/RUIContextualMenu.uss`.  However, if you want to use your own StyleSheet, here's what you do:
+All default styling is contained under: `Runtime/Resources/ContextualMenu.uss`.  However, if you want to use your own StyleSheet, here's what you can:
 ```
-// See the Quick Start example and change/add the following
 private void OnEnable()
 {
     ...
-    // Construct an RUIContextualMenuManager and feed it your StyleSheet
-    RUIContextualMenuManager manager = new(<YOUR STYLE SHEET>);
+    // Construct an ContextualMenuManager and feed it your StyleSheet
+    ContextualMenuManager manager = new(<YOUR STYLE SHEET>);
     
     // Pass the manager in to your MenuManipulator 
-    uiDocument.rootVisualElement.AddManipulator(new RUIContextualMenuManipulator(manager));
+    uiDocument.rootVisualElement.AddManipulator(new ContextualMenuManipulator(manager));
     ...
 }
 ```

@@ -1,0 +1,15 @@
+{
+  "name": "studio.shortsleeve.contextualmenuplayer",
+  "displayName": "Contexual Menu Player",
+  "author": {
+    "name": "Short Sleeve Studio",
+    "url": "https://github.com/Sahasrara/ContextualMenuPlayer"
+  },
+  "version": "0.0.0",
+  "unity": "2021.2",
+  "description": "A simple runtime contextual menu implementation built using Unity's UI Toolkit.",
+  "hideInEditor": false,
+  "keywords": [
+    "contextualmenu"
+  ]
+}
